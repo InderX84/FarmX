@@ -126,8 +126,10 @@ const CreateMod = () => {
         </p>
       </div>
 
-      <div className="glass-card rounded-2xl p-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Form Section */}
+        <div className="glass-card rounded-2xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
               Mod Name *
@@ -392,30 +394,106 @@ const CreateMod = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button
-              type="button"
-              onClick={() => navigate('/dashboard/my-mods')}
-              className="btn-secondary"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <span className="flex items-center space-x-2">
-                  <div className="spinner"></div>
-                  <span>Creating...</span>
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard/my-mods')}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <span className="flex items-center space-x-2">
+                    <div className="spinner"></div>
+                    <span>Creating...</span>
+                  </span>
+                ) : (
+                  'Create Mod'
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Preview Section */}
+        <div className="glass-card rounded-2xl p-8">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            Preview
+          </h3>
+          
+          <div className="space-y-6">
+            {/* Image Preview */}
+            <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-xl overflow-hidden">
+              {formData.imgUrl ? (
+                <img
+                  src={formData.imgUrl}
+                  alt="Mod preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div className={`w-full h-full flex items-center justify-center ${formData.imgUrl ? 'hidden' : 'flex'}`}>
+                <div className="text-center text-gray-500 dark:text-gray-400">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"/>
+                  </svg>
+                  <p>Image preview will appear here</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Mod Info Preview */}
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-lg font-bold text-white">
+                  {formData.title || 'Mod Title'}
+                </h4>
+                <p className="text-sm text-gray-400">
+                  {formData.category || 'Category'} • v{formData.version || '1.0.0'}
+                </p>
+              </div>
+              
+              <p className="text-gray-300 text-sm">
+                {formData.description || 'Mod description will appear here...'}
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  formData.isFree === 'true' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                }`}>
+                  {formData.isFree === 'true' ? 'Free' : `₹${formData.price || '0'}`}
                 </span>
-              ) : (
-                'Create Mod'
+                
+                {formData.gameName && (
+                  <span className="px-2 py-1 rounded text-xs bg-blue-600/80 text-white flex items-center space-x-1">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd"/>
+                    </svg>
+                    <span>{formData.gameName}</span>
+                  </span>
+                )}
+              </div>
+              
+              {formData.tags && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.split(',').map((tag, index) => (
+                    <span key={index} className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
               )}
-            </button>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

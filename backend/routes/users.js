@@ -6,6 +6,18 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Get public stats (no auth required)
+router.get('/stats', async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalMods = await Mod.countDocuments({ status: 'approved' });
+    
+    res.json({ totalUsers, totalMods });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Get user profile
 router.get('/profile', protect, async (req, res) => {
   try {

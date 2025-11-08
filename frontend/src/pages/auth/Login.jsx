@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../store/slices/authSlice';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import heroImg from '../../assets/hero.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -45,38 +46,46 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Website Name */}
-      <div className="flex-1 bg-gradient-to-br from-green-600 via-green-700 to-green-800 flex items-center justify-center relative">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("https://wallpapercave.com/wp/wp9772031.jpg")'}}></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-green-600/80 via-green-700/80 to-green-800/80"></div>
+      <div className="flex-1 bg-gradient-to-br from-green-600 via-green-700 to-green-800 flex items-center justify-center relative py-12 lg:py-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-600/30 via-green-700/30 to-green-800/30"></div>
         
-        <div className="relative text-center">
-          <div className="w-32 h-32 bg-gradient-to-br from-green-500 to-green-700 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl">
-            <span className="text-white font-bold text-6xl">🚜</span>
+        <div className="relative text-center px-4">
+          <div className="flex items-center justify-center mb-6">
+            <svg className="w-12 h-12 md:w-16 md:h-16 text-white mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              <path d="M12 2v4a4 4 0 014 4h4a8 8 0 00-8-8z"/>
+              <path d="M20 12a8 8 0 01-8 8v4c6.627 0 12-5.373 12-12h-4zm-2-5.291A7.962 7.962 0 0120 12h4c0-3.042-1.135-5.824-3-7.938l-3 2.647z"/>
+            </svg>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+              2 Fast Ale
+            </h1>
           </div>
-          <h1 className="text-6xl font-bold text-white mb-4">
-            FarmX
-          </h1>
-          <p className="text-2xl text-green-100">
+          <p className="text-lg md:text-xl lg:text-2xl text-green-100 mb-6">
             The Ultimate Hub for Farming Simulator Mods
           </p>
+          <img 
+            src={heroImg} 
+            alt="2 Fast Ale Hero" 
+            className="max-w-full h-auto max-h-48 md:max-h-64 lg:max-h-80 object-contain mx-auto"
+          />
         </div>
       </div>
       
       {/* Right Side - Login Form */}
-      <div className="flex-1 bg-white dark:bg-gray-900 flex items-center justify-center p-8">
+      <div className="flex-1 bg-white dark:bg-gray-900 flex items-center justify-center p-4 lg:p-8">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="text-center mb-6 lg:mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Welcome Back!
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
               Sign in to access your account
             </p>
           </div>
           
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4 lg:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email Address

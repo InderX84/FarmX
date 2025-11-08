@@ -12,6 +12,7 @@ import ManageUsers from '../components/dashboard/ManageUsers';
 import ManageGames from '../components/dashboard/ManageGames';
 import AdminMods from '../components/dashboard/AdminMods';
 import AdminRequests from '../components/dashboard/AdminRequests';
+import AdminSettings from '../components/dashboard/AdminSettings';
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -36,6 +37,7 @@ const Dashboard = () => {
             <Route path="/games" element={<ManageGames />} />
             <Route path="/admin-mods" element={<AdminMods />} />
             <Route path="/admin-requests" element={<AdminRequests />} />
+            <Route path="/settings" element={<AdminSettings />} />
           </>
         )}
       </Routes>

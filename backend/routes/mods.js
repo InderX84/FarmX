@@ -132,20 +132,25 @@ router.post('/', protect, upload.fields([
       });
     }
 
-    // Upload images to Cloudinary
+    // Upload images to Cloudinary (optional)
     const imageUrls = [];
-    if (req.files?.images) {
-      for (const image of req.files.images) {
-        const result = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            { folder: 'farmmods/images' },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          ).end(image.buffer);
-        });
-        imageUrls.push(result.secure_url);
+    if (req.files?.images && process.env.CLOUDINARY_API_KEY) {
+      try {
+        for (const image of req.files.images) {
+          const result = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+              { folder: 'farmmods/images' },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+              }
+            ).end(image.buffer);
+          });
+          imageUrls.push(result.secure_url);
+        }
+      } catch (uploadError) {
+        console.error('Image upload failed:', uploadError);
+        // Continue without additional images
       }
     }
 
@@ -169,7 +174,8 @@ router.post('/', protect, upload.fields([
       version,
       price: isFree === 'true' ? 0 : parseFloat(price) || 0,
       isFree: isFree === 'true',
-      images: imgUrl ? [imgUrl, ...imageUrls] : imageUrls,
+      images: imgUrl ? [imgUrl, ...imageUrls] : (imageUrls.length > 0 ? imageUrls : [imgUrl]),
+      imgUrl: imgUrl,
       fileUrl: modFileResult?.secure_url || null,
       downloadLink: downloadLink || null,
       adminContact: adminContact || null,

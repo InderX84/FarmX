@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import heroImg from '../assets/hero.png';
 
 const Home = () => {
   const [stats, setStats] = useState({ totalMods: 0, totalUsers: 0, totalDownloads: 0 });
@@ -9,28 +10,36 @@ const Home = () => {
     // Fetch stats and recent mods
     const fetchData = async () => {
       try {
-        // Fetch mods to calculate stats
-        const modsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/mods?limit=6&sort=-createdAt`);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        
+        // Fetch mods and users in parallel
+        const [modsRes, usersRes] = await Promise.all([
+          fetch(`${apiUrl}/mods?limit=6&sort=-createdAt`),
+          fetch(`${apiUrl}/users/stats`)
+        ]);
+        
+        let totalMods = 0, totalUsers = 0, totalDownloads = 0;
         
         if (modsRes.ok) {
           const modsData = await modsRes.json();
           setRecentMods(modsData.mods || []);
-          
-          // Calculate stats from mods data
-          const totalDownloads = modsData.mods?.reduce((sum, mod) => sum + (mod.downloads || 0), 0) || 0;
-          setStats({
-            totalMods: modsData.total || modsData.mods?.length || 0,
-            totalUsers: 1200, // This would come from a separate endpoint
-            totalDownloads: totalDownloads
-          });
-        } else {
-          // Fallback stats
+          totalMods = modsData.total || modsData.mods?.length || 0;
+          totalDownloads = modsData.mods?.reduce((sum, mod) => sum + (mod.downloads || 0), 0) || 0;
+        }
+        
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          totalUsers = usersData.totalUsers || 0;
+        }
+        
+        setStats({ totalMods, totalUsers, totalDownloads });
+        
+        // If no data, use fallback
+        if (totalMods === 0 && totalUsers === 0) {
           setStats({ totalMods: 25, totalUsers: 150, totalDownloads: 2500 });
-          setRecentMods([]);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Set realistic fallback data
         setStats({ totalMods: 25, totalUsers: 150, totalDownloads: 2500 });
         setRecentMods([]);
       }
@@ -42,65 +51,73 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("https://wallpapercave.com/wp/wp9772031.jpg")'}}></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-green-600/80 via-green-700/80 to-green-800/80"></div>
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-          <div className="text-center">
-            <div className="animate-fade-in">
-              <div className="flex items-center justify-center mb-6">
-                <svg className="w-16 h-16 md:w-20 md:h-20 text-white mr-4" fill="currentColor" viewBox="0 0 24 24">
+      <section className="relative bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white min-h-screen flex items-center overflow-hidden py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Content */}
+            <div className="animate-fade-in text-center lg:text-left order-2 lg:order-1">
+              <div className="flex items-center justify-center lg:justify-start mb-6">
+                <svg className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 text-white mr-3" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                   <path d="M12 2v4a4 4 0 014 4h4a8 8 0 00-8-8z"/>
                   <path d="M20 12a8 8 0 01-8 8v4c6.627 0 12-5.373 12-12h-4zm-2-5.291A7.962 7.962 0 0120 12h4c0-3.042-1.135-5.824-3-7.938l-3 2.647z"/>
                 </svg>
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">
-                  FarmX
+                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">
+                  2 Fast Ale
                 </h1>
               </div>
-              <p className="text-xl md:text-2xl mb-8 text-green-100 max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl lg:text-2xl mb-6 text-green-100">
                 The Ultimate Hub for Farming Simulator Enthusiasts
               </p>
-              <p className="text-lg mb-12 text-green-200 max-w-2xl mx-auto">
+              <p className="text-base md:text-lg mb-8 text-green-200">
                 Discover, download, and share amazing mods with our growing community of farmers
               </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Link
-                to="/mods"
-                className="bg-white text-green-700 px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center"
-              >
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
-                </svg>
-                Explore Mods
-              </Link>
-              <Link
-                to="/register"
-                className="border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-green-700 transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
-              >
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd"/>
-                </svg>
-                Join Now
-              </Link>
+              
+              <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center lg:justify-start">
+                <Link
+                  to="/mods"
+                  className="bg-white text-green-700 px-8 py-3 rounded-xl font-bold text-base hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
+                  </svg>
+                  Explore Mods
+                </Link>
+                <Link
+                  to="/register"
+                  className="border-2 border-white text-white px-8 py-3 rounded-xl font-bold text-base hover:bg-white hover:text-green-700 transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd"/>
+                  </svg>
+                  Join Now
+                </Link>
+              </div>
+              
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto lg:mx-0">
+                <div className="glass rounded-lg p-3 text-center">
+                  <div className="text-lg md:text-xl font-bold">{stats.totalMods.toLocaleString()}</div>
+                  <div className="text-green-200 text-xs">Mods</div>
+                </div>
+                <div className="glass rounded-lg p-3 text-center">
+                  <div className="text-lg md:text-xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+                  <div className="text-green-200 text-xs">Users</div>
+                </div>
+                <div className="glass rounded-lg p-3 text-center">
+                  <div className="text-lg md:text-xl font-bold">{stats.totalDownloads.toLocaleString()}</div>
+                  <div className="text-green-200 text-xs">Downloads</div>
+                </div>
+              </div>
             </div>
             
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="glass rounded-xl p-6">
-                <div className="text-3xl font-bold">{stats.totalMods.toLocaleString()}</div>
-                <div className="text-green-200">Total Mods</div>
-              </div>
-              <div className="glass rounded-xl p-6">
-                <div className="text-3xl font-bold">{stats.totalUsers.toLocaleString()}</div>
-                <div className="text-green-200">Community Members</div>
-              </div>
-              <div className="glass rounded-xl p-6">
-                <div className="text-3xl font-bold">{stats.totalDownloads.toLocaleString()}</div>
-                <div className="text-green-200">Downloads</div>
-              </div>
+            {/* Right Image */}
+            <div className="flex justify-center order-1 lg:order-2">
+              <img 
+                src={heroImg} 
+                alt="2 Fast Ale Hero" 
+                className="max-w-full h-auto max-h-64 md:max-h-80 lg:max-h-128 object-contain"
+              />
             </div>
           </div>
         </div>
@@ -111,7 +128,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose FarmX?
+              Why Choose 2 Fast Ale?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Everything you need to enhance your Farming Simulator experience

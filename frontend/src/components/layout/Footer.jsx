@@ -11,7 +11,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">🚜</span>
               </div>
-              <span className="text-xl font-bold">FarmX</span>
+              <span className="text-xl font-bold">2 Fast Ale</span>
             </div>
             <p className="text-gray-400 mb-4">
               The Ultimate Hub for Farming Simulator Mods.
@@ -63,10 +63,23 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">
-            © 2024 FarmX. All rights reserved.
-          </p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 mb-4 md:mb-0">
+              © 2024 2 Fast Ale. All rights reserved.
+            </p>
+            <div className="flex space-x-6">
+              <a href="https://instagram.com/farmx" className="text-gray-400 hover:text-pink-400 transition-colors">
+                Instagram
+              </a>
+              <a href="https://t.me/farmx" className="text-gray-400 hover:text-blue-400 transition-colors">
+                Telegram
+              </a>
+              <a href="https://discord.gg/zrGtm4BM" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                Discord
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

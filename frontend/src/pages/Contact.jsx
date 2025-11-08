@@ -47,7 +47,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">Email</h3>
-                  <p className="text-gray-600 dark:text-gray-400">support@farmx.com</p>
+                  <p className="text-gray-600 dark:text-gray-400">support@2fastale.com</p>
                 </div>
               </div>
               
@@ -57,7 +57,9 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">Discord</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Join our community server</p>
+                  <a href="https://discord.gg/zrGtm4BM" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    Join our community server
+                  </a>
                 </div>
               </div>
               

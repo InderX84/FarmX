@@ -11,6 +11,8 @@ import userRoutes from './routes/users.js';
 import categoryRoutes from './routes/categories.js';
 import modRequestRoutes from './routes/modRequests.js';
 import gameRoutes from './routes/games.js';
+import adminRoutes from './routes/admin.js';
+import { checkMaintenance } from './middleware/maintenance.js';
 
 dotenv.config();
 
@@ -38,8 +40,14 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Routes (admin routes first, before maintenance check)
+app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
+
+// Maintenance mode check (after admin and auth routes)
+app.use(checkMaintenance);
+
+// Other routes
 app.use('/api/mods', modRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/users', userRoutes);

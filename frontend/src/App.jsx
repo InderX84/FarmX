@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
@@ -22,6 +22,7 @@ import RequestMod from './components/mods/RequestMod';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Help from './pages/Help';
+import Maintenance from './pages/Maintenance';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function AppLayout() {
@@ -63,7 +64,8 @@ function AppLayout() {
 function AppContent() {
   const dispatch = useDispatch();
   const { darkMode } = useSelector((state) => state.ui);
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -80,7 +82,17 @@ function AppContent() {
       }
     };
     
+    const checkMaintenance = async () => {
+      try {
+        const response = await api.get('/admin/maintenance');
+        setMaintenanceMode(response.data.maintenanceMode);
+      } catch (error) {
+        console.error('Failed to check maintenance status:', error);
+      }
+    };
+    
     fetchUser();
+    checkMaintenance();
   }, [dispatch, token]);
 
   useEffect(() => {
@@ -90,6 +102,11 @@ function AppContent() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Show maintenance page for non-admin users when maintenance mode is enabled
+  if (maintenanceMode && (!user || user.role !== 'admin')) {
+    return <Maintenance />;
+  }
 
   return (
     <Router>

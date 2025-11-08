@@ -79,7 +79,7 @@ const Navbar = () => {
                   ? 'bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent'
                   : 'text-white drop-shadow-lg'
               }`}>
-                FarmX
+                2 Fast Ale
               </span>
             </div>
           </Link>
