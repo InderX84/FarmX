@@ -18,6 +18,7 @@ const EditMod = () => {
     isFree: true,
     imgUrl: '',
     downloadLink: '',
+    contactEmail: '',
     adminContact: '',
     instagramLink: '',
     telegramLink: ''
@@ -46,6 +47,7 @@ const EditMod = () => {
         isFree: mod.isFree,
         imgUrl: mod.imgUrl || mod.images?.[0] || '',
         downloadLink: mod.downloadLink || '',
+        contactEmail: mod.contactEmail || '',
         adminContact: mod.adminContact || '',
         instagramLink: mod.instagramLink || '',
         telegramLink: mod.telegramLink || ''
@@ -209,14 +211,29 @@ const EditMod = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Admin Contact</label>
+              <label className="block text-sm font-medium mb-2">Contact Email *</label>
+              <input
+                type="email"
+                name="contactEmail"
+                value={formData.contactEmail}
+                onChange={handleChange}
+                className="input-modern"
+                placeholder="your@email.com"
+                required={!formData.isFree}
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Purchase requests will be sent to this email
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Admin Contact (Optional)</label>
               <input
                 type="text"
                 name="adminContact"
                 value={formData.adminContact}
                 onChange={handleChange}
                 className="input-modern"
-                placeholder="admin@example.com or +91-9876543210"
+                placeholder="Additional contact info"
               />
             </div>
             <div>

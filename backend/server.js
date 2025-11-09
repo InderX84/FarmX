@@ -12,7 +12,10 @@ import categoryRoutes from './routes/categories.js';
 import modRequestRoutes from './routes/modRequests.js';
 import gameRoutes from './routes/games.js';
 import adminRoutes from './routes/admin.js';
+import purchaseRoutes from './routes/purchase.js';
+import notificationRoutes from './routes/notifications.js';
 import { checkMaintenance } from './middleware/maintenance.js';
+import { startCleanupScheduler } from './utils/cleanup.js';
 
 dotenv.config();
 
@@ -43,6 +46,8 @@ app.use(express.urlencoded({ extended: true }));
 // Routes (admin routes first, before maintenance check)
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/purchase', purchaseRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Maintenance mode check (after admin and auth routes)
 app.use(checkMaintenance);
@@ -68,4 +73,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startCleanupScheduler();
 });

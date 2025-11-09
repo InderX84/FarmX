@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -109,6 +110,8 @@ const Navbar = () => {
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
+              <>
+                <NotificationDropdown />
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -204,6 +207,7 @@ const Navbar = () => {
                   </>
                 )}
               </div>
+              </>
             ) : (
               <div className="flex items-center space-x-3">
                 <Link

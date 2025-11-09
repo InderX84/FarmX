@@ -19,6 +19,7 @@ const CreateMod = () => {
     isFree: true,
     imgUrl: '',
     downloadLink: '',
+    contactEmail: '',
     adminContact: '',
     instagramLink: '',
     telegramLink: ''
@@ -276,16 +277,32 @@ const CreateMod = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                    Admin Contact (Email/Phone) *
+                    Contact Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="contactEmail"
+                    value={formData.contactEmail}
+                    onChange={handleChange}
+                    required={!formData.isFree}
+                    className="input-modern"
+                    placeholder="your@email.com"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Purchase requests will be sent to this email
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Admin Contact (Optional)
                   </label>
                   <input
                     type="text"
                     name="adminContact"
                     value={formData.adminContact}
                     onChange={handleChange}
-                    required={!formData.isFree}
                     className="input-modern"
-                    placeholder="admin@example.com or +91-9876543210"
+                    placeholder="Additional contact info"
                   />
                 </div>
                 <div>

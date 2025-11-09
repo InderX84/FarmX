@@ -109,7 +109,7 @@ router.post('/', protect, upload.fields([
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, title, description, category, gameName, tags, version, price, isFree, imgUrl, adminContact, instagramLink, telegramLink } = req.body;
+    const { name, title, description, category, gameName, tags, version, price, isFree, imgUrl, contactEmail, adminContact, instagramLink, telegramLink } = req.body;
     const downloadLink = Array.isArray(req.body.downloadLink) ? req.body.downloadLink[0] : req.body.downloadLink;
     
     console.log('Processed downloadLink:', downloadLink, typeof downloadLink);
@@ -178,6 +178,7 @@ router.post('/', protect, upload.fields([
       imgUrl: imgUrl,
       fileUrl: modFileResult?.secure_url || null,
       downloadLink: downloadLink || null,
+      contactEmail: contactEmail || null,
       adminContact: adminContact || null,
       instagramLink: instagramLink || null,
       telegramLink: telegramLink || null,
@@ -185,6 +186,18 @@ router.post('/', protect, upload.fields([
       creator: req.user._id,
       status: req.user.role === 'admin' ? 'approved' : 'pending'
     });
+
+    // Create notification for user
+    if (req.user.role !== 'admin') {
+      const { createNotification } = await import('../utils/notifications.js');
+      await createNotification(
+        req.user._id,
+        'Mod Submitted',
+        `Your mod "${title}" has been submitted for review.`,
+        'mod_request',
+        mod._id
+      );
+    }
 
     await mod.populate('creator', 'username avatar');
 
@@ -283,10 +296,35 @@ router.patch('/:id/status', protect, authorize('admin'), async (req, res) => {
       req.params.id,
       { status },
       { new: true }
-    ).populate('creator', 'username avatar');
+    ).populate('creator', 'username avatar email');
 
     if (!mod) {
       return res.status(404).json({ message: 'Mod not found' });
+    }
+
+    // Send notification email and in-app notification to mod creator
+    if (status !== 'pending' && mod.creator?.email) {
+      try {
+        const { sendModStatusNotification } = await import('../utils/email.js');
+        await sendModStatusNotification(
+          mod.creator.email,
+          mod.title,
+          status,
+          mod.creator.username
+        );
+        
+        // Create in-app notification
+        const { createNotification } = await import('../utils/notifications.js');
+        await createNotification(
+          mod.creator._id,
+          `Mod ${status === 'approved' ? 'Approved' : 'Rejected'}`,
+          `Your mod "${mod.title}" has been ${status}.`,
+          status === 'approved' ? 'mod_approved' : 'mod_rejected',
+          mod._id
+        );
+      } catch (emailError) {
+        console.error('Failed to send status notification:', emailError);
+      }
     }
 
     res.json(mod);

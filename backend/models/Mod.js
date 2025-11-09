@@ -65,6 +65,10 @@ const modSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  contactEmail: {
+    type: String,
+    trim: true
+  },
   instagramLink: {
     type: String,
     trim: true

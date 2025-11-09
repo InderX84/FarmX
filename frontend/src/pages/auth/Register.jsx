@@ -48,10 +48,13 @@ const Register = () => {
       const { confirmPassword, ...registerData } = formData;
       const response = await api.post('/auth/register', registerData);
       
-      localStorage.setItem('token', response.data.token);
-      dispatch(loginSuccess(response.data));
-      toast.success('Registration successful!');
-      navigate('/');
+      toast.success('Registration successful! Please check your email for OTP.');
+      navigate('/verify-otp', {
+        state: {
+          userId: response.data.userId,
+          email: response.data.email
+        }
+      });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
     } finally {

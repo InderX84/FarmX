@@ -15,6 +15,7 @@ import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import VerifyOTP from './pages/auth/VerifyOTP';
 import ModsPage from './pages/ModsPage';
 import ModDetail from './pages/ModDetail';
 import Dashboard from './pages/Dashboard';
@@ -29,7 +30,7 @@ function AppLayout() {
   const location = useLocation();
   const { darkMode } = useSelector((state) => state.ui);
   const isDashboard = location.pathname.startsWith('/dashboard');
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/verify-otp';
   const isHomepage = location.pathname === '/';
 
   return (
@@ -40,6 +41,7 @@ function AppLayout() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/mods" element={<ModsPage />} />
           <Route path="/mods/:id" element={<ModDetail />} />
           <Route path="/request-mod" element={<RequestMod />} />
